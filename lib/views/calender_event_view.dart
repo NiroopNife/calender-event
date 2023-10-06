@@ -43,9 +43,7 @@ class _CalenderEventViewState extends State<CalenderEventView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Table Calender"),
-      ),
+      appBar: AppBar(),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
