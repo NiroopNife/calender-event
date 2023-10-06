@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "930545950628",
+    "project_id": "tablecalender-6998a",
+    "storage_bucket": "tablecalender-6998a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:930545950628:android:72b5469bc47f15cbb56b31",
+        "android_client_info": {
+          "package_name": "com.example.table_calender_event"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "930545950628-g2jn42h080juka9vv1sb3c53s07hph78.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsQZeJxcaQLeFQ5S0PUsq_KntFvDFJ1Xc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "930545950628-g2jn42h080juka9vv1sb3c53s07hph78.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "930545950628-khf73tomd2jatci3278c429ls4028on6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.tableCalenderEvent.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
