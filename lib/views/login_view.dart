@@ -32,15 +32,23 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: FilledButton(
-          onPressed: () async {
-            await signInWIthGoogle();
-            if (mounted) {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const DashboardView()));
-            }
-          },
-          child: const Text("Sign In with Google"),
+      body: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+
+            FilledButton(
+              onPressed: () async {
+                await signInWIthGoogle();
+                if (mounted) {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const DashboardView()));
+                }
+              },
+              child: const Text("Sign In with Google"),
+            ),
+          ],
         ),
       ),
     );

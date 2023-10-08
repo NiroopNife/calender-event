@@ -19,6 +19,7 @@ class _DashboardViewState extends State<DashboardView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: const SizedBox.shrink(),
         title: const Text("Table Calender"),
         actions: [
           IconButton(onPressed: () async {
