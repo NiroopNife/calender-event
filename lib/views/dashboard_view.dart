@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:table_calender_event/services/auth_service.dart';
 
 class DashboardView extends StatefulWidget {
   const DashboardView({Key? key}) : super(key: key);
@@ -10,11 +10,6 @@ class DashboardView extends StatefulWidget {
 
 class _DashboardViewState extends State<DashboardView> {
 
-  Future<void> signOut() async {
-    final GoogleSignIn googleSignIn = GoogleSignIn();
-    await googleSignIn.signOut();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +18,7 @@ class _DashboardViewState extends State<DashboardView> {
         title: const Text("Table Calender"),
         actions: [
           IconButton(onPressed: () async {
-            await signOut();
+            await AuthService().logout();
             Navigator.of(context).pop();
           }, icon: const Icon(Icons.power_settings_new))
         ],

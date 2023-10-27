@@ -1,8 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:table_calender_event/firebase_options.dart';
+import 'package:table_calender_event/providers/providers.dart';
 import 'package:table_calender_event/views/views.dart';
-
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,13 +19,14 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AuthProvider>(
+            create: (BuildContext context) => AuthProvider())
+      ],
+      child: MaterialApp(
+        home: LoginView(),
       ),
-      home: const LoginView(),
     );
   }
 }
