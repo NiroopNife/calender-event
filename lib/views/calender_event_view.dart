@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:table_calender_event/model/event_model.dart';
+import 'package:table_calender_event/services/calender_event_service.dart';
 
 class CalenderEventView extends StatefulWidget {
   const CalenderEventView({super.key});
@@ -65,6 +66,7 @@ class _CalenderEventViewState extends State<CalenderEventView> {
                       events.addAll({
                         _selectedDay!: [Event(_eventController.text)]
                       });
+                      CalenderEventService().createDayEvent(_selectedDay!, _eventController.text);
                       _eventController.clear();
                       Navigator.of(context).pop();
                       _selectedEvents.value = _getEventsForDay(_selectedDay!);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:table_calender_event/services/auth_service.dart';
+import 'package:table_calender_event/views/views.dart';
 
 class DashboardView extends StatefulWidget {
   const DashboardView({Key? key}) : super(key: key);
@@ -22,6 +23,12 @@ class _DashboardViewState extends State<DashboardView> {
             Navigator.of(context).pop();
           }, icon: const Icon(Icons.power_settings_new))
         ],
+      ),
+      body: Center(
+        child: FilledButton(
+          child: const Text("Go to Calender Events"),
+          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => CalenderEventView())),
+        ),
       ),
     );
   }
