@@ -1,6 +1,10 @@
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:table_calender_event/model/event_model.dart';
+import 'package:table_calender_event/services/auth_service.dart';
 import 'package:table_calender_event/services/calender_event_service.dart';
 
 class CalenderEventView extends StatefulWidget {
@@ -31,7 +35,8 @@ class _CalenderEventViewState extends State<CalenderEventView> {
     return events[day] ?? [];
   }
 
-  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
+    List<DocumentSnapshot> docs = await CalenderEventService().getEvents(focusedDay);
     if (!isSameDay(_selectedDay, selectedDay)) {
       setState(() {
         _selectedDay = selectedDay;
@@ -64,7 +69,7 @@ class _CalenderEventViewState extends State<CalenderEventView> {
                   ElevatedButton(
                     onPressed: () {
                       events.addAll({
-                        _selectedDay!: [Event(_eventController.text)]
+                        _selectedDay!: [Event(id: AuthService().getCurrentUser()!.uid,date: _selectedDay!, title: _eventController.text)]
                       });
                       CalenderEventService().createDayEvent(_selectedDay!, _eventController.text);
                       _eventController.clear();
