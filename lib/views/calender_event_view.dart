@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,42 +7,76 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:table_calender_event/model/event_model.dart';
 import 'package:table_calender_event/services/auth_service.dart';
 import 'package:table_calender_event/services/calender_event_service.dart';
+import 'package:table_calender_event/views/widgets/event_item.dart';
 
 class CalenderEventView extends StatefulWidget {
   const CalenderEventView({super.key});
-
 
   @override
   State<CalenderEventView> createState() => _CalenderEventViewState();
 }
 
 class _CalenderEventViewState extends State<CalenderEventView> {
+
+  late DateTime _focusedDay;
+  late DateTime _firstDay;
+  late DateTime _lastDay;
+  late DateTime _selectedDay;
+  late Map<DateTime, List<Event>> _events;
   final DateTime _today = DateTime.now();
-  DateTime? _selectedDay;
-  DateTime _focusedDay = DateTime.now();
-  Map<DateTime, List<Event>> events = {};
 
   final _eventController = TextEditingController();
-  late final ValueNotifier<List<Event>> _selectedEvents;
+
+  int getHashCode(DateTime key) {
+    return key.day * 1000000 + key.month * 10000 + key.year;
+  }
 
   @override
   void initState() {
     super.initState();
-    _selectedDay = _focusedDay;
-    _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
+    _events = LinkedHashMap(
+      equals: isSameDay,
+      hashCode: getHashCode,
+    );
+    _focusedDay = DateTime.now();
+    _firstDay = DateTime.now().subtract(const Duration(days: 1000));
+    _lastDay = DateTime.now().add(const Duration(days: 1000));
+    _selectedDay = DateTime.now();
+    _loadFireStoreEvents();
   }
 
   List<Event> _getEventsForDay(DateTime day) {
-    return events[day] ?? [];
+    return _events[day] ?? [];
+  }
+
+  _loadFireStoreEvents() async {
+    final firstDay = DateTime(_focusedDay.year, _focusedDay.month, 1);
+    final lastDay = DateTime(_focusedDay.year, _focusedDay.month + 1, 0);
+    _events = {};
+
+    final snap = await FirebaseFirestore.instance
+        .collection("events")
+        .where('date', isGreaterThanOrEqualTo: firstDay)
+        .where('date', isLessThanOrEqualTo: lastDay)
+        .withConverter(fromFirestore: Event.fromFireStore, toFirestore: (event, options) => event.toFireStore())
+        .get();
+
+    for (var doc in snap.docs) {
+      final event = doc.data();
+      final day = DateTime.utc(event.date.year, event.date.month, event.date.day);
+      if (_events[day] == null) {
+        _events[day] = [];
+      }
+      _events[day]!.add(event);
+    }
+    setState(() {});
   }
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
-    List<DocumentSnapshot> docs = await CalenderEventService().getEvents(focusedDay);
     if (!isSameDay(_selectedDay, selectedDay)) {
       setState(() {
         _selectedDay = selectedDay;
         _focusedDay = focusedDay;
-        _selectedEvents.value = _getEventsForDay(selectedDay);
       });
     }
   }
@@ -68,13 +103,17 @@ class _CalenderEventViewState extends State<CalenderEventView> {
                 actions: [
                   ElevatedButton(
                     onPressed: () {
-                      events.addAll({
-                        _selectedDay!: [Event(id: AuthService().getCurrentUser()!.uid,date: _selectedDay!, title: _eventController.text)]
+                      _events.addAll({
+                        _selectedDay: [
+                          Event(
+                              id: AuthService().getCurrentUser()!.uid,
+                              date: _selectedDay,
+                              title: _eventController.text)
+                        ]
                       });
-                      CalenderEventService().createDayEvent(_selectedDay!, _eventController.text);
+                      CalenderEventService().createDayEvent(_selectedDay, _eventController.text);
                       _eventController.clear();
                       Navigator.of(context).pop();
-                      _selectedEvents.value = _getEventsForDay(_selectedDay!);
                     },
                     child: const Text("Submit"),
                   )
@@ -102,27 +141,12 @@ class _CalenderEventViewState extends State<CalenderEventView> {
               eventLoader: _getEventsForDay,
             ),
           ),
-          Expanded(
-            child: ValueListenableBuilder<List<Event>>(
-              valueListenable: _selectedEvents,
-              builder: (context, value, _) {
-                return ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: value.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-                      decoration: BoxDecoration(border: Border.all(), borderRadius: BorderRadius.circular(12)),
-                      child: ListTile(
-                        onTap: () => print(""),
-                        title: Text(value[index].title),
-                      ),
-                    );
-                  },
-                );
-              },
+          ..._getEventsForDay(_selectedDay).map(
+            (event) => EventItem(
+              event: event,
+              onDelete: () {},
             ),
-          )
+          ),
         ],
       ),
     );

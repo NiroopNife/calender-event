@@ -15,7 +15,7 @@ class Event {
     final data = snapshot.data();
     return Event(
       id: snapshot.id,
-      title: data?['title'],
+      title: data?['event_name'],
       date: data?['date'].toDate(),
     );
   }
@@ -23,7 +23,7 @@ class Event {
   Map<String, Object?> toFireStore() {
     return {
       "date" : Timestamp.fromDate(date),
-      "title" : title
+      "event_name" : title
     };
   }
 }
