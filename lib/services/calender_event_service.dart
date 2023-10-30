@@ -2,14 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:table_calender_event/services/auth_service.dart';
 
 class CalenderEventService {
-  final CollectionReference eventsCollection = FirebaseFirestore.instance.collection("events");
+  final CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
 
   Future<void> createDayEvent(DateTime date, String eventName) async {
     try {
-      await eventsCollection.add({
-        "uId": AuthService()
-            .getCurrentUser()
-            ?.uid,
+
+      String userId = AuthService().getCurrentUser()!.uid;
+
+      await usersCollection.doc(userId).collection('events').add({
         "date": date,
         "event_name": eventName
       });

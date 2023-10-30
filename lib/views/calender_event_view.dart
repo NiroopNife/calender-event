@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -53,9 +52,11 @@ class _CalenderEventViewState extends State<CalenderEventView> {
     final firstDay = DateTime(_focusedDay.year, _focusedDay.month, 1);
     final lastDay = DateTime(_focusedDay.year, _focusedDay.month + 1, 0);
     _events = {};
-
+    final String userId = AuthService().getCurrentUser()!.uid;
     final snap = await FirebaseFirestore.instance
-        .collection("events")
+        .collection("users")
+        .doc(userId)
+        .collection('events')
         .where('date', isGreaterThanOrEqualTo: firstDay)
         .where('date', isLessThanOrEqualTo: lastDay)
         .withConverter(fromFirestore: Event.fromFireStore, toFirestore: (event, options) => event.toFireStore())
